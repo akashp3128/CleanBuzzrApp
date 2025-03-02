@@ -1,0 +1,89 @@
+stages:
+    - mavenbuild
+    - maventest
+    - autoDeploy
+    - androidbuild
+    - androidtest
+
+image: alpine
+
+maven-build:
+    stage: mavenbuild
+    tags:
+        - BACKEND
+    script:
+        - cd Backend/SpringFile/Buzzr
+        - mvn package -B
+    only:
+        refs:
+            - master
+        changes:
+            - Backend/**/*
+        
+maven-test:
+    stage: maventest
+    tags:
+        - BACKEND
+    script:
+        - cd Backend/SpringFile/Buzzr
+        - mvn package -B
+    artifacts:
+        paths:
+            - Backend/SpringFile/Buzzr/target/*.jar
+    only:
+        refs:
+            - master
+        changes:
+            - Backend/**/*
+autoDeploy:
+    stage: autoDeploy
+    tags:
+        - BACKEND
+    script:
+        - cd Backend/SpringFile/Buzzr
+        - mvn test
+        - mvn package -B
+        - sudo mv target/*.jar /target/buzzr.jar
+        - sudo systemctl stop buzzr-spring.service
+        - sudo systemctl start buzzr-spring.service
+    only:
+        refs:
+            - master
+        changes:
+            - Backend/**/*
+
+android-build: 
+    image: javiersantos/android-ci:latest
+    stage: androidbuild
+    before_script: 
+        - export GRADLE_USER_HOME=`pwd`/. gradle
+        - chmod +x ./Frontend/BuzzrFrontend/gradlew
+    tags: 
+        - FRONTEND
+    script: 
+        - cd Frontend/BuzzrFrontend
+        - ./gradlew assemble 
+    artifacts: 
+        paths: 
+            - Frontend/BuzzrFrontend/app/build/outputs/
+    only:
+        refs:
+            - master
+        changes:
+            - Frontend/**/*
+unitTests:
+    image: javiersantos/android-ci:latest
+    stage: androidtest
+    before_script:
+        - export GRADLE_USER_HOME=`pwd`/.gradle
+        - chmod +x ./Frontend/BuzzrFrontend/gradlew
+    tags:
+        - FRONTEND
+    script:
+        - cd Frontend/BuzzrFrontend
+        - ./gradlew test
+    only:
+        refs:
+            - master
+        changes:
+            - Frontend/**/*

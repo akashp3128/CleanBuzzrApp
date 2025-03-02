@@ -1,0 +1,9 @@
+com.example.buzzrfrontend
+com.example.buzzrfrontend.DRVinterface
+com.example.buzzrfrontend.data
+com.example.buzzrfrontend.data.model
+com.example.buzzrfrontend.ui.barberprofile
+com.example.buzzrfrontend.ui.loginView
+com.example.buzzrfrontend.ui.main
+com.example.buzzrfrontend.ui.mapView
+com.example.buzzrfrontend.ui.registerView

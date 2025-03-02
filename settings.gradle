@@ -1,0 +1,9 @@
+include ':app'
+rootProject.name = "BuzzrFrontend"
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+} 
